@@ -8,7 +8,7 @@
 <meta content="#3f0b48" name="theme-color"/>
 <title>Darshan Controlss Corporation | Electrical Engineering &amp; Contracting</title>
 <style>
-:root{--purple:#3f0b48;--purple2:#561365;--gold:#ffc900;--ink:#201b24;--muted:#6d6871;--paper:#fbfaf8;--line:#e9e3eb;--white:#fff}
+:root{--purple:#3f0b48;--purple2:#5161365;--gold:#ffc900;--ink:#201b24;--muted:#6d6871;--paper:#fbfaf8;--line:#e9e3eb;--white:#fff}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}a{color:inherit;text-decoration:none}.wrap{width:min(1160px,92%);margin:auto}
 header{position:sticky;top:0;z-index:10;background:#ffffffed;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
 .nav{height:82px;display:flex;align-items:center;justify-content:space-between;gap:22px}.brand{display:flex;align-items:center;gap:12px;min-width:240px}.brand img{width:58px;height:58px;object-fit:contain}.brand strong{display:block;color:var(--purple);font-size:15px;line-height:1.15;letter-spacing:.02em}.brand small{display:block;color:var(--muted);font-size:10px;letter-spacing:.12em;margin-top:5px}.links{display:flex;align-items:center;gap:25px;font-size:13px;font-weight:650;color:#443b48}.links a:hover{color:var(--purple2)}.nav-cta,.btn{background:var(--purple);color:white;padding:12px 18px;border-radius:4px;font-size:13px;font-weight:700;display:inline-flex;align-items:center;gap:9px}.nav-cta:hover,.btn:hover{background:var(--purple2)}.menu{display:none;border:0;background:none;font-size:25px;color:var(--purple)}
@@ -483,7 +483,7 @@ ol.panel-list li::before{
 <div class="contact-row"><small>Email</small><a href="mailto:darshancontrolss@gmail.com">darshancontrolss@gmail.com</a><br/><a href="mailto:rsk68consultant@gmail.com">rsk68consultant@gmail.com</a></div>
 <div class="contact-row"><small>Service area</small>Tamil Nadu and neighbouring states.</div>
 </div>
-<form class="form" id="enquiry"><input id="name" placeholder="Your name" required=""/><input id="phone" placeholder="Phone number" required=""/><input id="email" placeholder="Email address (optional)" type="email"/><select id="service"><option value="">Select service required</option><option>HT / LT Installation</option><option>Electrical Panel Manufacturing</option><option>Industrial Electrification</option><option>Consultancy &amp; Design</option><option>Automation &amp; Control</option><option>Other project enquiry</option></select><textarea id="message" placeholder="Tell us briefly about your project"></textarea><button class="btn" type="submit">Send enquiry via WhatsApp ↗</button><div class="note">This form opens WhatsApp with your enquiry details. It does not store information on this website.</div></form>
+<form class="form" id="enquiry"><input id="name" placeholder="Your name" required=""/><input id="phone" placeholder="Phone number" required=""/><input id="email" placeholder="Email address (optional)" type="email"/><select id="service"><option value="">Select service required</option><option>HT / LT Installation</option><option>Electrical Panel Manufacturing</option><option>Industrial Electrification</option><option>Consultancy &amp; Design</option><option>Automation &amp; Control</option><option>Other project enquiry</option></select><textarea id="message" placeholder="Tell us briefly about your project"></textarea><button class="btn" type="submit">Submit Enquiry ↗</button><div class="note">This form opens WhatsApp with your enquiry details. It does not store information on this website.</div></form>
 </div></div></section>
 <section class="careers" id="careers"><div class="wrap"><div class="section-head"><div class="kicker">Careers at DCC</div><h2>Build your career with us.</h2><p>We welcome motivated candidates who are interested in growing with Darshan Controlss Corporation. Share your details and tell us what you can bring to our team.</p></div>
 <div class="career-panel"><form class="career-form" id="careerForm">
@@ -570,8 +570,96 @@ ol.panel-list li::before{
 document.getElementById('year').textContent=new Date().getFullYear();
 document.getElementById('menu').addEventListener('click',()=>document.getElementById('links').classList.toggle('open'));
 document.querySelectorAll('#links a').forEach(a=>a.addEventListener('click',()=>document.getElementById('links').classList.remove('open')));
-document.getElementById('enquiry').addEventListener('submit',e=>{e.preventDefault();const v=id=>document.getElementById(id).value.trim();const msg=`DCC Website Enquiry%0AName: ${encodeURIComponent(v('name'))}%0APhone: ${encodeURIComponent(v('phone'))}%0AEmail: ${encodeURIComponent(v('email'))}%0AService: ${encodeURIComponent(v('service'))}%0ADetails: ${encodeURIComponent(v('message'))}`;window.open('https://wa.me/919786036636?text='+msg,'_blank','noopener');});
-document.getElementById('careerForm').addEventListener('submit',e=>{e.preventDefault();const v=id=>document.getElementById(id).value.trim();const file=document.getElementById('careerResume').files[0];const lines=['DCC Careers Application','Name: '+v('careerName'),'Phone: '+v('careerPhone'),'Email: '+(v('careerEmail')||'Not provided'),'Qualifications: '+v('careerQualification'),'Why I want to join DCC: '+(v('careerWhy')||'Not provided'),'Skills and abilities: '+(v('careerAbility')||'Not provided'),'Resume: '+(file?file.name:'Not attached')];const url='https://wa.me/919786036636?text='+encodeURIComponent(lines.join('\n'));const w=window.open(url,'_blank','noopener');document.getElementById('careerStatus').textContent=file?'WhatsApp is opening. Please attach '+file.name+' in the chat before sending.':'WhatsApp is opening with your application details.';if(!w)document.getElementById('careerStatus').textContent='Please allow pop-ups for this website, then submit again.';});
+
+document.getElementById('enquiry').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const v = id => document.getElementById(id).value.trim();
+    const button = form.querySelector('button[type="submit"]');
+    const note = form.querySelector('.note');
+
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+
+    try {
+        const response = await fetch('/api/enquiries', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: v('name'),
+                phone: v('phone'),
+                email: v('email'),
+                service: v('service'),
+                message: v('message')
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Submission failed');
+        }
+
+        note.textContent = 'Thank you! Your enquiry has been submitted successfully.';
+        form.reset();
+
+    } catch (error) {
+        console.error(error);
+        note.textContent = 'Unable to submit your enquiry. Please try again.';
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Submit Enquiry';
+    }
+});
+
+
+document.getElementById('enquiry').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const form = e.currentTarget;
+    const v = id => document.getElementById(id).value.trim();
+    const button = form.querySelector('button[type="submit"]');
+    const note = form.querySelector('.note');
+
+    button.disabled = true;
+    button.textContent = 'Submitting...';
+
+    try {
+        const response = await fetch('/api/enquiries', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                name: v('name'),
+                phone: v('phone'),
+                email: v('email'),
+                service: v('service'),
+                message: v('message')
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Submission failed');
+        }
+
+        note.textContent = 'Thank you! Your enquiry has been submitted successfully.';
+        form.reset();
+
+    } catch (error) {
+        console.error(error);
+        note.textContent = 'Unable to submit your enquiry. Please try again.';
+    } finally {
+        button.disabled = false;
+        button.textContent = 'Submit Enquiry';
+    }
+});
+
 </script>
 <script>
 document.querySelectorAll('.project').forEach((card)=>{

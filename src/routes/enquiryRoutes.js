@@ -23,7 +23,7 @@ router.post('/', async (req, res) => {
 
         res.status(201).json({
             status: 'success',
-            message: 'Enquiry saved successfully',
+            message: 'Thank you for your enquiry! We will get back to you soon.',
             enquiry: result.rows[0]
         });
 
